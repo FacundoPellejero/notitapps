@@ -13,9 +13,21 @@
 
 
     <div class="notes-list">
-      <app-note-card [cardTitle]="'Test 123'" [cardBody]="'test test test!'"></app-note-card>
-      <app-note-card cardTitle="cardTitle" cardBody="  Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed repellat natus fugiat quos distinctio, nostrum harum velit magnam ab id, dolorem tenetur doloribus nesciunt a eius! Cupiditate incidunt provident repudiandae.  Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed repellat natus fugiat quos distinctio, nostrum harum velit magnam ab id, dolorem tenetur doloribus nesciunt a eius! Cupiditate incidunt provident repudiandae.  Lorem ipsum dolor sit amet consectetur adipisicing elit. Sed repellat natus fugiat quos distinctio, nostrum harum velit magnam ab id, dolorem tenetur doloribus nesciunt a eius! Cupiditate incidunt provident repudiandae."></app-note-card>
-      <app-note-card></app-note-card>
-      <app-note-card></app-note-card>
+      <app-note-card *ngFor="let note of notes; index as i"
+      [link]="i.toString()" 
+      (delete)="deleteNote(i)"
+      [cardTitle]="note.title" 
+      [cardBody]="note.body">  
+      </app-note-card>
     </div>
+
+
+    <button class="button floating-add-button is-primary" [routerLink]="'/new'">
+      <span class="icon">
+        <i class="fab fa-plus"></i> 
+      </span>
+      <span>Agregar</span>
+    </button>
+
+
   </div>
