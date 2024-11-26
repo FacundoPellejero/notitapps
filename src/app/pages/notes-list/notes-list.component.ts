@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component, ElementRef, OnInit, ViewChild } from '@angular/core';
 import { NoteCardComponent } from "../../note-card/note-card.component";
 import { Note } from '../../shared/note.model';
 import { NotesService } from '../../shared/notes.service';
@@ -87,6 +87,10 @@ import { animate, query, stagger, style, transition, trigger } from '@angular/an
 export class NotesListComponent implements OnInit {
   
   notes: Note[] = new Array<Note>();
+  filteredNotes: Note[] = new Array<Note>();
+
+  @ViewChild('filterInput', { static: true }) filterInputElRef!: ElementRef<HTMLInputElement>;
+
   
   constructor(private notesService: NotesService) {
     
@@ -94,9 +98,90 @@ export class NotesListComponent implements OnInit {
   ngOnInit(){
     //Traemos todas las notas desde el servicio
     this.notes = this.notesService.getAll();
+    this.filteredNotes = this.notes;
   }
 
   deleteNote(id: number){
     this.notesService.delete(id);
+    this.filter(this.filterInputElRef.nativeElement.value)
+  }
+
+  filter(query: string){
+    query.toLowerCase().trim();
+    let allResults: Note[] = new Array<Note>();
+
+    //divido el filtro por palabras
+    let terms: string[] = query.split(' ');
+    //elimino duplicados
+    terms = this.removeDuplicates(terms);
+    //array con resultados relevantes
+    terms.forEach(term =>{
+      let results = this.relevantNotes(term);
+      //agrego el resultado al array de resultados
+      allResults = [...allResults, ...results]
+    });
+
+    //filtro duplicados de las notas
+    let uniqueResults = this.removeDuplicates(allResults);
+    this.filteredNotes = uniqueResults;
+
+    //ordena por relevancia (mientras mas aparece un resultado mas relevante)
+    this.sortByRelevancy(allResults);
+
+  }
+
+  removeDuplicates(array: Array<any>): Array<any> {
+    const uniqueResults: Set<any> = new Set<any>();
+    //recorro el array ingresado y los agrego al set que no admite dup
+    array.forEach(e => uniqueResults.add(e));
+    return Array.from(uniqueResults);
+  }
+
+  relevantNotes(query: string): Array<Note>{
+    query = query.toLowerCase().trim();
+    let relevantNotes = this.notes.filter(note =>{
+      if (note.title && note.title.toLowerCase().includes(query)) {
+        return true;
+      }
+      if (note.body && note.body.toLowerCase().includes(query) ) {
+        return true;
+      }
+      return false;
+    })
+
+    return relevantNotes;
+  }
+
+  sortByRelevancy(searchResults: Note[]){
+    //Calcula la relevancia de la nota
+
+    // let noteCountObj: Object = {}; //key.value => NoteId:number (note obj id:count)
+
+    //Refactorizacion de la solucion planteada, utilizando Map en vez de object
+    let noteCountMap = new Map<number, number>();
+
+    searchResults.forEach(note => {
+      let noteId: number = this.notesService.getId(note);
+
+      if (noteCountMap.has(noteId)) {
+        noteCountMap.set(noteId, (noteCountMap.get(noteId) || 0) + 1)
+      }
+      else {
+        noteCountMap.set(noteId, 1);
+      }
+    })
+
+    this.filteredNotes = this.filteredNotes.sort((a: Note, b: Note) =>{
+      let aId = this.notesService.getId(a);
+      let bId = this.notesService.getId(b);
+
+      // let aCount = noteCountObj[aId];
+      // let bCount = noteCountObj[bId];
+      //Refactorizacion utilizando map
+      let aCount = noteCountMap.get(aId) || 0;
+      let bCount = noteCountMap.get(bId) || 0; //||0 es para evitar errores en el caso de que no exista conteo, devuelve 0
+      return bCount - aCount; //aca se aplica una forma de ordenar arrays de JS
+    })
+
   }
 }
