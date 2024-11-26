@@ -12,12 +12,13 @@
 
 
 
-    <div class="notes-list">
+    <div class="notes-list" [@listAnim]>
       <app-note-card *ngFor="let note of notes; index as i"
       [link]="i.toString()" 
       (delete)="deleteNote(i)"
-      [cardTitle]="note.title" 
-      [cardBody]="note.body">  
+      [cardTitle]="note.title | uppercase" 
+      [cardBody]="note.body"
+      [@itemAnim]>  
       </app-note-card>
     </div>
 
