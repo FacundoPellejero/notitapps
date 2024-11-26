@@ -5,6 +5,10 @@
     margin-top: 50px;
 }
 
+.btn{
+    margin-top: 15px;
+}
+
 input, textarea{
     &.ng-invalid.ng-touched {
         border-color: red;
