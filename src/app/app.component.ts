@@ -6,8 +6,8 @@ import { FormsModule } from '@angular/forms';
   selector: 'app-root',
   standalone: true,
   imports: [RouterOutlet,
-    FormsModule
-  ],
+    FormsModule, 
+],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss'
 })
