@@ -1,10 +1,11 @@
-import { Component, ElementRef, Input, Renderer2, ViewChild } from '@angular/core';
+import { Component, ElementRef, EventEmitter, Input, Output, Renderer2, ViewChild } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 
 @Component({
   selector: 'app-note-card',
   standalone: true,
-  imports: [],
+  imports: [RouterLink],
   templateUrl: './note-card.component.html',
   styleUrl: './note-card.component.scss'
 })
@@ -13,6 +14,10 @@ export class NoteCardComponent {
 
   @Input() cardTitle!: string;
   @Input() cardBody!: string;
+  @Input() link!: string;
+
+  //Emite un evento que 'escucha' el contenedor padre (note-list)
+  @Output('delete') deleteEvent: EventEmitter<void> = new EventEmitter<void>();
 
   @ViewChild('truncator', { static: true }) truncator!: ElementRef<HTMLElement>;
   @ViewChild('bodyText', { static: true }) bodyText!: ElementRef<HTMLElement>;
@@ -35,4 +40,9 @@ export class NoteCardComponent {
 
 
   }
+
+  onXButtonClick(){
+    this.deleteEvent.emit();
+  }
+
 }

@@ -1,15 +1,13 @@
 <div #container class="note-card-container">
+  <a [routerLink]="link">
     <div class="note-card-content">
-        <h1 class="note-card-title">{{ cardTitle }}</h1>
-
-        <div #bodyText class="note-card-body">
-            <p>{{ cardBody }}</p>
-                
-            <div #truncator class="fade-out-truncation"></div>
-            
-        </div>
-
+      <h1 class="note-card-title">{{ cardTitle }}</h1>
+      <div #bodyText class="note-card-body">
+        <p>{{ cardBody }}</p>
+        <div #truncator class="fade-out-truncation"></div>
+      </div>
     </div>
+  </a>
 
-    <div class="x-button"></div>
+  <div class="x-button" (click)="onXButtonClick()"></div>
 </div>
